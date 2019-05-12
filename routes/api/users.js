@@ -32,7 +32,7 @@ router.post(
     const { name, email, password } = req.body;
 
     try {
-      // Find user
+      // Check user
       let user = await User.findOne({ email });
 
       if (user) {
