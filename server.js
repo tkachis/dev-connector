@@ -6,6 +6,11 @@ const app = express();
 // Connect Database
 connectDB();
 
+// parse application/x-www-form-urlencoded
+//app.use(express.urlencoded({ extended: false }));
+// parse application/json
+app.use(express.json({ extended: false }));
+
 app.get("/", (req, res) => res.send("API running"));
 
 // Define Routes
