@@ -67,6 +67,7 @@ router.get("/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
+    // Make sure post exists
     if (!post) return res.status(404).json({ msg: "Post not found" });
 
     res.json(post);
@@ -86,6 +87,7 @@ router.delete("/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
+    // Make sure post exists
     if (!post) return res.status(404).json({ msg: "Post not found" });
 
     //Check user
@@ -112,6 +114,7 @@ router.put("/like/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
+    // Make sure post exists
     if (!post) return res.status(404).json({ msg: "Post not found" });
 
     // Check if the post has already been liked
@@ -143,6 +146,7 @@ router.put("/unlike/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
+    // Make sure post exists
     if (!post) return res.status(404).json({ msg: "Post not found" });
 
     // Check if the post has already been liked
@@ -164,6 +168,97 @@ router.put("/unlike/:id", auth, async (req, res) => {
     res.json(post.likes);
   } catch (err) {
     console.error(err.message);
+    if (err.kind == "ObjectId") {
+      return res.status(404).json({ msg: "Post not found" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route         POST api/posts/comment/:id
+// @description   Comment on a post
+// @access        Private
+router.post(
+  "/comment/:id",
+  [
+    auth,
+    [
+      check("text", "Text is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const user = await User.findById(req.user.id).select("-password");
+      const post = await Post.findById(req.params.id);
+
+      // Make sure post exists
+      if (!post) return res.status(404).json({ msg: "Post not found" });
+
+      const newComment = {
+        text: req.body.text,
+        name: user.name,
+        avatar: user.avatar,
+        user: req.user.id
+      };
+
+      post.comments.unshift(newComment);
+
+      await post.save();
+
+      res.json(post.comments);
+    } catch (err) {
+      console.error(err.message);
+      if (err.kind == "ObjectId") {
+        return res.status(404).json({ msg: "Post not found" });
+      }
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+// @route         POST api/posts/comment/:id/:comment_id
+// @description   Delete comment
+// @access        Private
+router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    // Make sure post exists
+    if (!post) return res.status(404).json({ msg: "Post not found" });
+
+    // Pull out comment
+    const comment = post.comments.find(
+      comment => comment.id === req.params.comment_id
+    );
+
+    // Make sure comment exists
+    if (!comment) {
+      return res.status(404).json({ msg: "Comment does not exist" });
+    }
+
+    // Check user
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(404).json({ msg: "User not authorized" });
+    }
+
+    // Get a new array without a comment
+    const newCommentsArr = post.comments.filter(
+      comment => comment.id !== req.params.comment_id
+    );
+    post.comments = newCommentsArr;
+
+    await post.save();
+
+    res.json(post.comments);
+  } catch (err) {
+    console.error(err);
     if (err.kind == "ObjectId") {
       return res.status(404).json({ msg: "Post not found" });
     }
