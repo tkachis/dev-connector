@@ -2,7 +2,7 @@ import { SET_ALERT, REMOVE_ALERT } from '../constants'
 
 const initialState = []
 
-export default function(state = initialState, { type, payload }) {
+export default (state = initialState, { type, payload }) => {
 	switch (type) {
 		case SET_ALERT:
 			return [...state, payload]
