@@ -34,8 +34,11 @@ export const createProfile = (
 			payload: res.data,
 		})
 
-		dispatch(setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success'))
+		dispatch(
+			setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success', 5000)
+		)
 
+		// Redirect on rout /dashboard
 		if (!edit) {
 			history.push('/dashboard')
 		}
