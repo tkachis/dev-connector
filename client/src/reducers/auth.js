@@ -6,6 +6,7 @@ import {
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
 	LOGOUT,
+	ACCAUNT_DELETED,
 } from '../constants'
 
 const initialState = {
@@ -39,6 +40,7 @@ export default (state = initialState, { type, payload }) => {
 		case LOGIN_FAIL:
 		case AUTH_ERROR:
 		case LOGOUT:
+		case ACCAUNT_DELETED:
 			localStorage.removeItem('token')
 			return {
 				...state,

@@ -1,4 +1,4 @@
-// Systems
+// System
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -94,7 +94,7 @@ const AddEducation = ({ addEducation, history }) => {
 								toggleDisabled(!toDateDisabled)
 							}}
 						/>{' '}
-						Current Job
+						Current School
 					</p>
 				</div>
 				<div className="form-group">
