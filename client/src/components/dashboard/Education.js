@@ -33,7 +33,7 @@ const Education = ({ education, deleteEducation }) => {
 	return (
 		<>
 			<h2 className="my-2">Education Credentials</h2>
-			{education.lenght > 0 ? (
+			{education.length > 0 ? (
 				<table className="table">
 					<thead>
 						<tr>
