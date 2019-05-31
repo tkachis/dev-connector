@@ -30,6 +30,7 @@ const ProfileItem = ({
 						<i className="fas fa-check" /> {skill}
 					</li>
 				))}
+				<li className="text-primary">More in Profile</li>
 			</ul>
 		</div>
 	)
